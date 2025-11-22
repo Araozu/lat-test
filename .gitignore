@@ -1,0 +1,22 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+publish/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.sln.iml
+
+# OS files
+*.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+packages/
+
+# dotnet tools
+.dotnet/

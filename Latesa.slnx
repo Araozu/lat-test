@@ -1,5 +1,5 @@
 <Solution>
-  <Folder Name="/Web/">
-    <Project Path="Web/Acide.Latesa.Web.csproj" />
-  </Folder>
+    <Folder Name="/Web/">
+        <Project Path="Web/Acide.Latesa.Web.csproj" />
+    </Folder>
 </Solution>

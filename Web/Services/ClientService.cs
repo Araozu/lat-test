@@ -20,7 +20,7 @@ public class ClientService
                 Email = "john.doe@example.com",
                 Phone = "+1-555-0101",
                 Company = "Tech Corp",
-                CreatedDate = DateTime.Now.AddDays(-30)
+                CreatedDate = DateTime.UtcNow.AddDays(-30)
             });
             _clients.Add(new Client
             {
@@ -29,7 +29,7 @@ public class ClientService
                 Email = "jane.smith@example.com",
                 Phone = "+1-555-0102",
                 Company = "Business Solutions Inc",
-                CreatedDate = DateTime.Now.AddDays(-15)
+                CreatedDate = DateTime.UtcNow.AddDays(-15)
             });
             _clients.Add(new Client
             {
@@ -38,7 +38,7 @@ public class ClientService
                 Email = "robert.j@example.com",
                 Phone = "+1-555-0103",
                 Company = "Consulting Group",
-                CreatedDate = DateTime.Now.AddDays(-7)
+                CreatedDate = DateTime.UtcNow.AddDays(-7)
             });
         }
     }
@@ -64,7 +64,7 @@ public class ClientService
         lock (_lock)
         {
             client.Id = _nextId++;
-            client.CreatedDate = DateTime.Now;
+            client.CreatedDate = DateTime.UtcNow;
             _clients.Add(client);
             return Task.FromResult(client);
         }

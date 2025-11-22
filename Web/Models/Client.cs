@@ -21,5 +21,5 @@ public class Client
     [StringLength(100, ErrorMessage = "Company name cannot exceed 100 characters")]
     public string Company { get; set; } = string.Empty;
     
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; set; }
 }

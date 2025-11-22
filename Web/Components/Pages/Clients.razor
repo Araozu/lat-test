@@ -25,21 +25,26 @@
         <div class="card-body">
             <EditForm Model="currentClient" OnValidSubmit="SaveClient">
                 <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
                 <div class="mb-3">
                     <label class="form-label">Name</label>
                     <InputText class="form-control" @bind-Value="currentClient.Name" />
+                    <ValidationMessage For="@(() => currentClient.Name)" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email</label>
                     <InputText class="form-control" @bind-Value="currentClient.Email" type="email" />
+                    <ValidationMessage For="@(() => currentClient.Email)" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Phone</label>
                     <InputText class="form-control" @bind-Value="currentClient.Phone" />
+                    <ValidationMessage For="@(() => currentClient.Phone)" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Company</label>
                     <InputText class="form-control" @bind-Value="currentClient.Company" />
+                    <ValidationMessage For="@(() => currentClient.Company)" />
                 </div>
                 <div>
                     <button type="submit" class="btn btn-success">

@@ -1,11 +1,10 @@
-using System.Collections.Concurrent;
 using Acide.Latesa.Web.Models;
 
 namespace Acide.Latesa.Web.Services;
 
 public class ClientService
 {
-    private readonly ConcurrentBag<Client> _clients = new();
+    private readonly List<Client> _clients = new();
     private int _nextId = 1;
     private readonly object _lock = new();
 
@@ -95,13 +94,7 @@ public class ClientService
             if (client == null)
                 return Task.FromResult(false);
 
-            // ConcurrentBag doesn't support direct removal, so we need to recreate
-            var updatedClients = _clients.Where(c => c.Id != id).ToList();
-            _clients.Clear();
-            foreach (var c in updatedClients)
-            {
-                _clients.Add(c);
-            }
+            _clients.Remove(client);
             return Task.FromResult(true);
         }
     }

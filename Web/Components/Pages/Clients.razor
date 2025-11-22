@@ -3,6 +3,7 @@
 @using Acide.Latesa.Web.Models
 @using Acide.Latesa.Web.Services
 @inject ClientService ClientService
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Clients - CRM</PageTitle>
 
@@ -167,7 +168,13 @@ else
 
     private async Task DeleteClient(int id)
     {
-        if (await ClientService.DeleteClientAsync(id))
+        var client = clients?.FirstOrDefault(c => c.Id == id);
+        if (client == null) return;
+
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", 
+            $"Are you sure you want to delete {client.Name}?");
+        
+        if (confirmed && await ClientService.DeleteClientAsync(id))
         {
             await LoadClients();
         }

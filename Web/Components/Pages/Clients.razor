@@ -1,0 +1,157 @@
+@page "/clients"
+@using Acide.Latesa.Web.Models
+@using Acide.Latesa.Web.Services
+@inject ClientService ClientService
+@rendermode InteractiveServer
+
+<PageTitle>Clients</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical" Style="padding: 20px;">
+    <FluentLabel Typo="Typography.H3">Client Management</FluentLabel>
+    
+    <FluentStack Orientation="Orientation.Horizontal" Style="margin-bottom: 20px;">
+        <FluentButton Appearance="Appearance.Accent" OnClick="@(() => OpenDialog(null))">
+            <FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+            Add New Client
+        </FluentButton>
+    </FluentStack>
+
+    <FluentDataGrid Items="@FilteredClients" Style="width: 100%;">
+        <PropertyColumn Property="@(c => c.Name)" Sortable="true" />
+        <PropertyColumn Property="@(c => c.Email)" Sortable="true" />
+        <PropertyColumn Property="@(c => c.Phone)" Sortable="true" />
+        <PropertyColumn Property="@(c => c.Company)" Sortable="true" />
+        <PropertyColumn Property="@(c => c.CreatedAt)" Format="yyyy-MM-dd HH:mm" Title="Created" Sortable="true" />
+        <TemplateColumn Title="Actions">
+            <FluentStack Orientation="Orientation.Horizontal">
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => OpenDialog(context))">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Edit())" />
+                </FluentButton>
+                <FluentButton Appearance="Appearance.Lightweight" OnClick="@(() => OpenDeleteDialog(context))">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="Color.Error" />
+                </FluentButton>
+            </FluentStack>
+        </TemplateColumn>
+    </FluentDataGrid>
+</FluentStack>
+
+<FluentDialog @bind-Hidden="@hideDialog" Modal="true" TrapFocus="true" Style="min-width: 500px;">
+    <FluentDialogHeader>
+        <FluentStack Orientation="Orientation.Horizontal" Style="align-items: center; width: 100%;">
+            <FluentLabel Typo="Typography.H4">@(editingClient?.Id > 0 ? "Edit Client" : "Add New Client")</FluentLabel>
+            <FluentSpacer />
+        </FluentStack>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <FluentStack Orientation="Orientation.Vertical" Style="gap: 15px;">
+            <FluentTextField @bind-Value="editingClient.Name" Label="Name" Required="true" Style="width: 100%;" />
+            <FluentTextField @bind-Value="editingClient.Email" Label="Email" Required="true" Style="width: 100%;" />
+            <FluentTextField @bind-Value="editingClient.Phone" Label="Phone" Style="width: 100%;" />
+            <FluentTextField @bind-Value="editingClient.Company" Label="Company" Style="width: 100%;" />
+        </FluentStack>
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Appearance="Appearance.Accent" OnClick="SaveClient" Disabled="@(!IsFormValid())">
+            Save
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideDialog = true)">
+            Cancel
+        </FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
+<FluentDialog @bind-Hidden="@hideDeleteDialog" Modal="true" TrapFocus="true" Style="min-width: 400px;">
+    <FluentDialogHeader>
+        <FluentLabel Typo="Typography.H4">Confirm Delete</FluentLabel>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <FluentLabel>Are you sure you want to delete <strong>@deletingClient?.Name</strong>?</FluentLabel>
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Appearance="Appearance.Accent" OnClick="ConfirmDelete" Style="background-color: var(--error);">
+            Delete
+        </FluentButton>
+        <FluentButton Appearance="Appearance.Neutral" OnClick="@(() => hideDeleteDialog = true)">
+            Cancel
+        </FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
+@code {
+    private IQueryable<Client>? FilteredClients;
+    private Client editingClient = new();
+    private Client? deletingClient;
+    private bool hideDialog = true;
+    private bool hideDeleteDialog = true;
+
+    protected override void OnInitialized()
+    {
+        LoadClients();
+    }
+
+    private void LoadClients()
+    {
+        FilteredClients = ClientService.GetAll().AsQueryable();
+    }
+
+    private void OpenDialog(Client? client)
+    {
+        if (client == null)
+        {
+            editingClient = new Client();
+        }
+        else
+        {
+            editingClient = new Client
+            {
+                Id = client.Id,
+                Name = client.Name,
+                Email = client.Email,
+                Phone = client.Phone,
+                Company = client.Company,
+                CreatedAt = client.CreatedAt
+            };
+        }
+        hideDialog = false;
+    }
+
+    private void OpenDeleteDialog(Client client)
+    {
+        deletingClient = client;
+        hideDeleteDialog = false;
+    }
+
+    private void SaveClient()
+    {
+        if (!IsFormValid())
+            return;
+
+        if (editingClient.Id > 0)
+        {
+            ClientService.UpdateClient(editingClient);
+        }
+        else
+        {
+            ClientService.AddClient(editingClient);
+        }
+
+        LoadClients();
+        hideDialog = true;
+    }
+
+    private void ConfirmDelete()
+    {
+        if (deletingClient != null)
+        {
+            ClientService.DeleteClient(deletingClient.Id);
+            LoadClients();
+        }
+        hideDeleteDialog = true;
+    }
+
+    private bool IsFormValid()
+    {
+        return !string.IsNullOrWhiteSpace(editingClient?.Name) && 
+               !string.IsNullOrWhiteSpace(editingClient?.Email);
+    }
+}

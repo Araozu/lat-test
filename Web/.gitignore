@@ -1,5 +1,7 @@
-[Bb]in/
-[Oo]bj/
+Bin/
+Obj/
+bin/
+obj/
 
 .vs/
 .idea/

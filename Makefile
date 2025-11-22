@@ -2,7 +2,7 @@ dd.PHONY: clean build rebuild
 
 # Default configuration
 CONFIG ?= Debug
-FRAMEWORK ?= net9.0
+FRAMEWORK ?= net10.0
 VERBOSITY ?= minimal
 
 clean:
@@ -15,7 +15,7 @@ build:
 rebuild: clean build
 
 run:
-	dotnet watch run --project Api --configuration $(CONFIG) --framework $(FRAMEWORK) $(ARGS)
+	dotnet watch run --project Web --configuration $(CONFIG) --framework $(FRAMEWORK) $(ARGS)
 
 rerun: clean run
 
